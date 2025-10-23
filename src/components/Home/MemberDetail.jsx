@@ -8,6 +8,8 @@ const MemberDetail = () => {
   const [showModal, setShowModal] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedbackText, setFeedbackText] = useState("");
+  const [isUploading, setIsUploading] = useState(false); // ✅ add this near top
+
 
   const [formData, setFormData] = useState({
     title: "",
@@ -66,37 +68,42 @@ const MemberDetail = () => {
   };
 
   // 📤 Handle submit
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const fd = new FormData();
-      fd.append("familyMember", id);
-      for (let key in formData) {
-        if (key === "files") {
-          for (let file of formData.files) fd.append("files", file);
-        } else {
-          fd.append(key, formData[key]);
-        }
-      }
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsUploading(true); // ✅ start loading
 
-      const res = await fetch("https://hackathon-backend-flax.vercel.app/api/reports/add", {
-        method: "POST",
-        body: fd,
-      });
-
-      const data = await res.json();
-      if (data.success) {
-        alert("Report uploaded successfully!");
-        setShowModal(false);
-        fetchReports();
+  try {
+    const fd = new FormData();
+    fd.append("familyMember", id);
+    for (let key in formData) {
+      if (key === "files") {
+        for (let file of formData.files) fd.append("files", file);
       } else {
-        alert(data.message);
+        fd.append(key, formData[key]);
       }
-    } catch (error) {
-      console.error(error);
-      alert("Upload failed!");
     }
-  };
+
+    const res = await fetch("https://hackathon-backend-flax.vercel.app/api/reports/add", {
+      method: "POST",
+      body: fd,
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      alert("Report uploaded successfully!");
+      setShowModal(false);
+      fetchReports();
+    } else {
+      alert(data.message);
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Upload failed!");
+  } finally {
+    setIsUploading(false); // ✅ stop loading in all cases
+  }
+};
+
 
   // 🔍 Feedback modal trigger (fixed)
   const handleFeedbackClick = (aiData) => {
@@ -331,12 +338,16 @@ const MemberDetail = () => {
                 >
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-green-500 text-white rounded-lg"
-                >
-                  Upload
-                </button>
+               <button
+  type="submit"
+  className={`px-4 py-2 text-white rounded-lg transition ${
+    isUploading ? "bg-gray-400 cursor-not-allowed" : "bg-green-500 hover:bg-green-600"
+  }`}
+  disabled={isUploading}
+>
+  {isUploading ? "Uploading..." : "Upload"}
+</button>
+
               </div>
             </form>
           </div>

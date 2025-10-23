@@ -22,14 +22,18 @@ const Nav = () => {
 
   // ✅ Fetch user
   const fetchUser = async () => {
-    try {
-      const res = await axios.get("https://hackathon-backend-flax.vercel.app/auth/users");
-      const activeUser = res.data.users.find((u) => u.isActive === true);
+  try {
+    const res = await axios.get("https://hackathon-backend-flax.vercel.app/auth/users");
+    const activeUser = res.data.users.find((u) => u.isActive === true);
+    if (activeUser) {
       setUser(activeUser);
-    } catch (error) {
-      console.error("Error fetching user:", error.message);
+      localStorage.setItem("userId", activeUser._id);
     }
-  };
+  } catch (error) {
+    console.error("Error fetching user:", error.message);
+  }
+};
+
 
   useEffect(() => {
     fetchUser();

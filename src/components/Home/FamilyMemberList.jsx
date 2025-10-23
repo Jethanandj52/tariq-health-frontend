@@ -6,14 +6,18 @@ import { useNavigate } from "react-router-dom";
 const FamilyMemberList = () => {
   const [familyMembers, setFamilyMembers] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [userId, setUserId] = useState(localStorage.getItem("userId"));
   const navigate = useNavigate();
-  const userId = "670f1e1f3d9a2b456789abcd"; // test userId
 
-  // ✅ Fetch members from backend
+  // ✅ Fetch family members when userId is available
   useEffect(() => {
+    if (!userId) return;
+
     const fetchMembers = async () => {
       try {
-        const res = await fetch(`https://hackathon-backend-flax.vercel.app/api/family/user/${userId}`);
+        const res = await fetch(
+          `https://hackathon-backend-flax.vercel.app/api/family/user/${userId}`
+        );
         const data = await res.json();
         if (data.success) setFamilyMembers(data.members);
       } catch (err) {
@@ -21,16 +25,19 @@ const FamilyMemberList = () => {
       }
     };
     fetchMembers();
-  }, []);
+  }, [userId]);
 
   // ✅ Add new member
   const addMember = async (memberData) => {
     try {
-      const res = await fetch("https://hackathon-backend-flax.vercel.app/api/family/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...memberData, user: userId }),
-      });
+      const res = await fetch(
+        "https://hackathon-backend-flax.vercel.app/api/family/add",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...memberData, user: userId }),
+        }
+      );
       const data = await res.json();
       if (data.success) {
         setFamilyMembers([...familyMembers, data.member]);
@@ -43,9 +50,9 @@ const FamilyMemberList = () => {
     }
   };
 
+  // ✅ UI
   return (
     <div className="max-w-5xl mx-auto p-6 mt-20 relative">
-      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-green-700 dark:text-green-400">
           👨‍👩‍👧‍👦 Family Members
@@ -58,7 +65,7 @@ const FamilyMemberList = () => {
         </button>
       </div>
 
-      {/* ✅ Modal Popup for Add Member */}
+      {/* Add Member Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg w-[90%] max-w-md relative">
@@ -73,7 +80,7 @@ const FamilyMemberList = () => {
         </div>
       )}
 
-      {/* ✅ Family Member Cards */}
+      {/* Family Member Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {familyMembers.map((member) => (
           <div
@@ -89,7 +96,9 @@ const FamilyMemberList = () => {
               />
               <div>
                 <h3 className="text-lg font-semibold">{member.name}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{member.relation}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {member.relation}
+                </p>
               </div>
             </div>
           </div>

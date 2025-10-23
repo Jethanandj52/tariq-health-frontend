@@ -9,7 +9,7 @@ const About = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const res = await fetch("http://localhost:7000/api/doctors/getDoctor");
+        const res = await fetch("https://hackathon-backend-flax.vercel.app/api/doctors/getDoctor");
         const data = await res.json();
         if (data.success) {
           setDoctors(data.doctors.slice(0, 4)); // sirf pehle 4 doctors
@@ -116,7 +116,7 @@ const About = () => {
               className="bg-white dark:bg-gray-900 rounded-xl shadow-md p-6 hover:-translate-y-2 transition-all duration-300 border border-gray-100 dark:border-gray-700"
             >
               <img
-                src={doc.imageUrl}
+                src={`${doc.imageUrl}`}
                 alt={doc.name}
                 className="w-24 h-24 mx-auto rounded-full mb-4 object-cover border-4 border-green-300 dark:border-green-600"
               />
