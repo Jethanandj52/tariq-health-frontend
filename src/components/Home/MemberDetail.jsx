@@ -8,9 +8,12 @@ const MemberDetail = () => {
   const [showModal, setShowModal] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedbackText, setFeedbackText] = useState("");
-  const [isUploading, setIsUploading] = useState(false); // ✅ add this near top
+  const [translatedText, setTranslatedText] = useState("");
+  const [lang, setLang] = useState("english");
+  const [loadingTrans, setLoadingTrans] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
-
+  // 🧾 Upload form data
   const [formData, setFormData] = useState({
     title: "",
     testName: "",
@@ -28,11 +31,37 @@ const MemberDetail = () => {
     files: [],
   });
 
-  // 🧍 Fetch family member
+  // 🌍 Translate AI feedback
+  const handleTranslate = async (targetLang) => {
+    try {
+      setLoadingTrans(true);
+      const res = await fetch(
+        "https://hackathon-backend-flax.vercel.app/api/reports/translate",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: feedbackText, lang: targetLang }),
+        }
+      );
+      const data = await res.json();
+      if (data.success) {
+        setLang(targetLang);
+        setTranslatedText(data.translated);
+      } else alert("Translation failed");
+    } catch (err) {
+      alert("Translation error");
+    } finally {
+      setLoadingTrans(false);
+    }
+  };
+
+  // 🧍 Fetch member
   useEffect(() => {
     const fetchMember = async () => {
       try {
-        const res = await fetch(`https://hackathon-backend-flax.vercel.app/api/family/${id}`);
+        const res = await fetch(
+          `https://hackathon-backend-flax.vercel.app/api/family/${id}`
+        );
         const data = await res.json();
         if (data.success) setMember(data.member);
       } catch (err) {
@@ -42,10 +71,12 @@ const MemberDetail = () => {
     fetchMember();
   }, [id]);
 
-  // 📄 Fetch all reports of this member
+  // 📄 Fetch member reports
   const fetchReports = async () => {
     try {
-      const res = await fetch(`https://hackathon-backend-flax.vercel.app/api/reports/member/${id}`);
+      const res = await fetch(
+        `https://hackathon-backend-flax.vercel.app/api/reports/member/${id}`
+      );
       const data = await res.json();
       if (data.success) setReports(data.reports);
     } catch (err) {
@@ -57,7 +88,7 @@ const MemberDetail = () => {
     fetchReports();
   }, [id]);
 
-  // ✍️ Handle inputs
+  // ✍️ Handle input change
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (files) {
@@ -67,55 +98,56 @@ const MemberDetail = () => {
     }
   };
 
-  // 📤 Handle submit
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  setIsUploading(true); // ✅ start loading
-
-  try {
-    const fd = new FormData();
-    fd.append("familyMember", id);
-    for (let key in formData) {
-      if (key === "files") {
-        for (let file of formData.files) fd.append("files", file);
-      } else {
-        fd.append(key, formData[key]);
+  // 📤 Upload new report
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("familyMember", id);
+      for (let key in formData) {
+        if (key === "files") {
+          for (let file of formData.files) fd.append("files", file);
+        } else {
+          fd.append(key, formData[key]);
+        }
       }
+
+      const res = await fetch(
+        "https://hackathon-backend-flax.vercel.app/api/reports/add",
+        {
+          method: "POST",
+          body: fd,
+        }
+      );
+
+      const data = await res.json();
+      if (data.success) {
+        alert("Report uploaded successfully!");
+        setShowModal(false);
+        fetchReports();
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Upload failed!");
+    } finally {
+      setIsUploading(false);
     }
+  };
 
-    const res = await fetch("https://hackathon-backend-flax.vercel.app/api/reports/add", {
-      method: "POST",
-      body: fd,
-    });
-
-    const data = await res.json();
-    if (data.success) {
-      alert("Report uploaded successfully!");
-      setShowModal(false);
-      fetchReports();
-    } else {
-      alert(data.message);
-    }
-  } catch (error) {
-    console.error(error);
-    alert("Upload failed!");
-  } finally {
-    setIsUploading(false); // ✅ stop loading in all cases
-  }
-};
-
-
-  // 🔍 Feedback modal trigger (fixed)
+  // 💬 Open feedback modal
   const handleFeedbackClick = (aiData) => {
     if (!aiData) {
       setFeedbackText("⚠️ No AI feedback available");
     } else if (typeof aiData === "object") {
-      // agar feedback ek object hai
       setFeedbackText(aiData.feedback || JSON.stringify(aiData, null, 2));
     } else {
-      // agar sirf string hai
       setFeedbackText(aiData);
     }
+    setTranslatedText("");
+    setLang("english");
     setShowFeedback(true);
   };
 
@@ -137,7 +169,6 @@ const MemberDetail = () => {
         <p className="text-gray-500 dark:text-gray-400">
           Added on: {new Date(member.createdAt).toLocaleDateString()}
         </p>
-
         <button
           onClick={() => setShowModal(true)}
           className="mt-4 px-5 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
@@ -149,7 +180,6 @@ const MemberDetail = () => {
       {/* 📋 Reports Table */}
       <div className="mt-8 overflow-x-auto">
         <h3 className="text-xl font-semibold mb-3">🧾 Uploaded Reports</h3>
-
         {reports.length === 0 ? (
           <p className="text-gray-500">No reports uploaded yet.</p>
         ) : (
@@ -204,7 +234,7 @@ const MemberDetail = () => {
                   <td className="p-2 text-center">
                     <button
                       onClick={() => handleFeedbackClick(r.aiAnalysis)}
-                      className="text-green-600 underline"
+                      className="text-green-600 underline hover:text-green-800"
                     >
                       View Feedback
                     </button>
@@ -355,20 +385,18 @@ const MemberDetail = () => {
       )}
 
       {/* 💬 Feedback Modal */}
-    {/* 💬 Feedback Modal (Enhanced Design) */}
-{/* 💬 Stylish AI Feedback Modal */}
-{showFeedback && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md animate-fadeIn">
-    <div className="relative bg-gradient-to-br from-white/80 to-white/60 dark:from-gray-900/90 dark:to-gray-800/80 border border-gray-200/40 dark:border-gray-700/40 rounded-3xl shadow-2xl w-[95%] sm:w-[480px] p-6 backdrop-blur-lg transition-all duration-300">
-      
-      {/* ✨ Header */}
-      <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-3 mb-4">
+      {showFeedback && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md pt-20 pb-20">
+    <div className=" m-20 relative bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-[95%] sm:w-[600px] p-6 border border-gray-200 dark:border-gray-700 transition-all animate-fadeIn">
+
+      {/* 🔝 Header */}
+      <div className="flex justify-between items-center border-b pb-3 mb-4 ">
         <h2 className="text-2xl font-bold text-green-600 dark:text-green-400 flex items-center gap-2">
-          <span>🧠</span> AI Health Feedback
+          🧠 AI Health Feedback
         </h2>
         <button
           onClick={() => setShowFeedback(false)}
-          className="text-gray-500 hover:text-red-500 transition-all text-lg"
+          className="text-gray-500 hover:text-red-500 text-lg transition"
         >
           ✕
         </button>
@@ -376,17 +404,17 @@ const MemberDetail = () => {
 
       {/* 👤 Member Info */}
       {member && (
-        <div className="flex items-center gap-4 mb-5 bg-green-50/60 dark:bg-gray-800/60 p-3 rounded-2xl border border-green-200/40 dark:border-green-700/40 shadow-sm">
+        <div className="flex items-center gap-4 mb-5 bg-green-50 dark:bg-gray-800/80 p-4 rounded-2xl border border-green-200 dark:border-green-700 shadow-sm">
           <img
             src={member.imageUrl}
             alt={member.name}
             className="w-16 h-16 rounded-2xl border-2 border-green-400 shadow-md"
           />
-          <div className="space-y-1">
-            <p className="text-gray-900 dark:text-gray-100 font-semibold text-base">
+          <div>
+            <p className="font-semibold text-gray-900 dark:text-white text-lg">
               {member.name}
             </p>
-            <p className="text-green-600 dark:text-green-400 text-sm capitalize">
+            <p className="text-green-600 dark:text-green-400 text-sm">
               {member.relation}
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -396,39 +424,78 @@ const MemberDetail = () => {
         </div>
       )}
 
-      {/* 🩺 Feedback Content */}
-      <div className="bg-white/70 dark:bg-gray-900/60 rounded-2xl p-4 border border-gray-200/40 dark:border-gray-700/40 shadow-inner overflow-y-auto max-h-[55vh]">
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3 border-b border-gray-200/40 dark:border-gray-700/40 pb-2">
-          🩺 Analysis Result
-        </h3>
+      {/* 🌐 Language Selector */}
+      <div className="mb-4">
+        <label className="block text-gray-700 dark:text-gray-300 text-sm mb-1 font-medium">
+          🌍 Select Language:
+        </label>
+        <select
+          onChange={(e) => {
+            const selectedLang = e.target.value;
+            if (selectedLang === "english") setTranslatedText("");
+            else handleTranslate(selectedLang);
+          }}
+          value={lang}
+          className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-green-400"
+        >
+          <option value="english">English</option>
+          <option value="romanHindi">Hindi (Roman)</option>
+          <option value="romanUrdu">Urdu (Roman)</option>
+        </select>
+      </div>
 
-        <div className="space-y-3 text-gray-700 dark:text-gray-300 text-sm leading-relaxed tracking-wide">
-          {feedbackText.split("\n").map((line, i) => {
-            const headingMatch = line.match(/\*\*(.+?)\*\*/);
-            if (headingMatch) {
-              return (
-                <h4
-                  key={i}
-                  className="text-green-600 dark:text-green-400 font-semibold text-base mt-4 mb-1 border-l-4 border-green-400 pl-2"
-                >
-                  {headingMatch[1]}
-                </h4>
-              );
-            }
-            return (
-              <p key={i} className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                {line}
-              </p>
-            );
-          })}
-        </div>
+      {/* 🩺 AI Feedback Section */}
+      <div className="max-h-[55vh] overflow-y-auto bg-gray-50 dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700 shadow-inner">
+        {loadingTrans ? (
+          <p className="text-center text-gray-600 dark:text-gray-300">
+            Translating...
+          </p>
+        ) : (
+          <div className="space-y-3 text-gray-800 dark:text-gray-200 text-sm leading-relaxed">
+            {(translatedText || feedbackText)
+              .split("\n")
+              .map((line, i) => {
+                // agar heading format "**Heading**" hai
+                const heading = line.match(/\*\*(.+?)\*\*/);
+                if (heading) {
+                  return (
+                    <h4
+                      key={i}
+                      className="text-green-600 dark:text-green-400 font-semibold text-base mt-4 mb-1 border-l-4 border-green-400 pl-2"
+                    >
+                      {heading[1]}
+                    </h4>
+                  );
+                }
+                // agar bullet point ya paragraph hai
+                if (line.trim().startsWith("- ")) {
+                  return (
+                    <li
+                      key={i}
+                      className="list-disc ml-6 text-gray-700 dark:text-gray-300"
+                    >
+                      {line.replace("- ", "")}
+                    </li>
+                  );
+                }
+                return (
+                  <p
+                    key={i}
+                    className="text-gray-700 dark:text-gray-300 leading-relaxed"
+                  >
+                    {line}
+                  </p>
+                );
+              })}
+          </div>
+        )}
       </div>
 
       {/* 🚪 Footer Button */}
       <div className="text-center mt-6">
         <button
           onClick={() => setShowFeedback(false)}
-          className="px-8 py-2.5 bg-green-500 hover:bg-green-600 active:scale-95 text-white font-medium rounded-xl shadow-md transition-all duration-300"
+          className="px-8 py-2.5 bg-green-500 hover:bg-green-600 text-white font-medium rounded-xl shadow-md transition-all duration-300"
         >
           Close
         </button>
@@ -436,7 +503,6 @@ const MemberDetail = () => {
     </div>
   </div>
 )}
-
 
     </div>
   );
