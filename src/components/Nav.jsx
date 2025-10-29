@@ -16,7 +16,7 @@ const Nav = () => {
 
   const fetchUser = async () => {
     try {
-      const res = await axios.get("https://hackathon-backend-flax.vercel.app/auth/users");
+      const res = await axios.get("https://tariq-health-backend.vercel.app/auth/users");
       const activeUser = res.data.users.find((u) => u.isActive === true);
       if (activeUser) {
         setUser(activeUser);
@@ -33,7 +33,7 @@ const Nav = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post("https://hackathon-backend-flax.vercel.app/auth/logout", {
+      await axios.post("https://tariq-health-backend.vercel.app/auth/logout", {
         email: user?.email,
       });
       toast.success("Logout successful", { autoClose: 1000 });
