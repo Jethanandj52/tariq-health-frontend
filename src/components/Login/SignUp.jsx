@@ -24,7 +24,7 @@ const SignUp = () => {
 
     try {
       const res = await axios.post(
-        "https://hackathon-backend-flax.vercel.app/auth/signup",
+        "https://tariq-health-backend.vercel.app/auth/signup",
         { firstName, lastName, email, password },
         { withCredentials: true }
       );

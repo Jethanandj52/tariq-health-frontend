@@ -20,7 +20,7 @@ const Login = () => {
 
     try {
       const res = await axios.post(
-        "https://hackathon-backend-flax.vercel.app/auth/login",
+        "https://tariq-health-backend.vercel.app/auth/login",
         { email, password },
         { withCredentials: true }
       );

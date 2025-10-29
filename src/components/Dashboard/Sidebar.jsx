@@ -14,7 +14,7 @@ const Sidebar = () => {
   const links = [
     { path: "/dashboard", label: "Dashboard", icon: <FiHome /> },
     { path: "/dashboard/allUsers", label: "All Users", icon: <FiUsers /> },
-    { path: "/dashboard/addDoctor", label: "Add Doctor", icon: <FiPlusSquare /> },
+    
     { path: "/dashboard/reports", label: "Reports", icon: <FiBarChart2 /> },
   ];
 

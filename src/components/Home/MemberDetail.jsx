@@ -34,7 +34,7 @@ const MemberDetail = () => {
   useEffect(() => {
     const fetchMember = async () => {
       try {
-        const res = await fetch(`https://hackathon-backend-flax.vercel.app/api/family/${id}`);
+        const res = await fetch(`https://tariq-health-backend.vercel.app/api/family/${id}`);
         const data = await res.json();
         if (data.success) setMember(data.member);
       } catch (err) {
@@ -48,7 +48,7 @@ const MemberDetail = () => {
   useEffect(() => {
     const fetchReports = async () => {
       try {
-        const res = await fetch(`https://hackathon-backend-flax.vercel.app/api/reports/member/${id}`);
+        const res = await fetch(`https://tariq-health-backend.vercel.app/api/reports/member/${id}`);
         const data = await res.json();
         if (data.success) setReports(data.reports);
       } catch (err) {
@@ -77,7 +77,7 @@ const MemberDetail = () => {
         }
       }
 
-      const res = await fetch("https://hackathon-backend-flax.vercel.app/api/reports/add", {
+      const res = await fetch("https://tariq-health-backend.vercel.app/api/reports/add", {
         method: "POST",
         body: fd,
       });
@@ -101,7 +101,7 @@ const MemberDetail = () => {
           weight: "",
           files: [],
         });
-        const resReports = await fetch(`https://hackathon-backend-flax.vercel.app/api/reports/member/${id}`);
+        const resReports = await fetch(`https://tariq-health-backend.vercel.app/api/reports/member/${id}`);
         const dataReports = await resReports.json();
         if (dataReports.success) setReports(dataReports.reports);
       } else alert(data.message);
@@ -121,7 +121,7 @@ const MemberDetail = () => {
     }
     setLoadingTrans(true);
     try {
-      const res = await fetch("https://hackathon-backend-flax.vercel.app/api/reports/translate", {
+      const res = await fetch("https://tariq-health-backend.vercel.app/api/reports/translate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: feedbackText, lang: targetLang }),

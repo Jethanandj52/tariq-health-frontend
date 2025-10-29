@@ -28,7 +28,7 @@ const ResetPassword = () => {
 
     try {
       const res = await axios.post(
-        `https://hackathon-backend-flax.vercel.app/auth/reset-password/${token}`,
+        `https://tariq-health-backend.vercel.app/auth/reset-password/${token}`,
         { newPassword: password }
       );
 

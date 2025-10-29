@@ -14,7 +14,7 @@ const FamilyMemberList = () => {
     const fetchMembers = async () => {
       try {
         const res = await fetch(
-          `https://hackathon-backend-flax.vercel.app/api/family/user/${userId}`
+          `https://tariq-health-backend.vercel.app/api/family/user/${userId}`
         );
         const data = await res.json();
         if (data.success) setFamilyMembers(data.members);
@@ -28,7 +28,7 @@ const FamilyMemberList = () => {
   const addMember = async (memberData) => {
     try {
       const res = await fetch(
-        "https://hackathon-backend-flax.vercel.app/api/family/add",
+        "https://tariq-health-backend.vercel.app/api/family/add",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

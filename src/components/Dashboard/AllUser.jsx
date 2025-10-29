@@ -10,7 +10,7 @@ const AllUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:7000/auth/users");
+      const res = await axios.get("https://tariq-health-backend.vercel.app/auth/users");
       setUsers(res.data.users || []);
     } catch (error) {
       toast.error("Unable to fetch users");
@@ -22,7 +22,7 @@ const AllUsers = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:7000/auth/users/${id}`);
+      await axios.delete(`https://tariq-health-backend.vercel.app/auth/users/${id}`);
       toast.success("User removed successfully");
       fetchUsers();
     } catch (error) {
@@ -33,7 +33,7 @@ const AllUsers = () => {
 
   const handleToggle = async (id, currentStatus) => {
     try {
-      await axios.put(`http://localhost:7000/auth/users/${id}`, {
+      await axios.put(`https://tariq-health-backend.vercel.app/auth/users/${id}`, {
         isActive: !currentStatus,
       });
       toast.success(

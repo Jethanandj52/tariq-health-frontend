@@ -15,7 +15,7 @@ const Forget = () => {
 
     try {
       const res = await axios.post(
-        "https://hackathon-backend-flax.vercel.app/auth/forget-password",
+        "https://tariq-health-backend.vercel.app/auth/forget-password",
         { email },
         { withCredentials: true }
       );
