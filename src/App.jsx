@@ -18,7 +18,7 @@ import ResetPassword from "./components/Login/ResetPassword.jsx";
 import Home from "./components/Home/Home.jsx";
 import About from "./components/Home/About.jsx";
 import Contact from "./components/Home/Contact.jsx";
-import AllDoctors from "./components/Home/AllDoctors.jsx";
+ 
 import UploadReport from "./components/Home/UploadReport.jsx";
 
 // 🧱 Dashboard (Admin Panel)
@@ -57,7 +57,7 @@ const App = () => {
           />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/doctors" element={<AllDoctors />} />
+     
           <Route path="/report" element={<UploadReport />} />
           <Route path="/family" element={<FamilyMemberList />} />
         <Route path="/member/:id" element={<MemberDetail />} />

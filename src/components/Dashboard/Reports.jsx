@@ -1,5 +1,5 @@
 import React from "react";
-import { FiBarChart2, FiActivity } from "react-icons/fi";
+import { FiActivity, FiClipboard, FiUser, FiFileText } from "react-icons/fi";
 
 const Reports = () => {
   const dummyReports = [
@@ -9,49 +9,67 @@ const Reports = () => {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto mt-10 bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
-      <div className="flex items-center gap-3 mb-6">
-        <FiBarChart2 className="text-green-500 text-3xl" />
-        <h2 className="text-2xl font-bold text-green-700 dark:text-green-400">Reports Overview 📋</h2>
+    <div className="max-w-7xl mx-auto mt-10 mb-16 px-4 sm:px-6 lg:px-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-center justify-between mb-10">
+        <div className="flex items-center gap-3">
+          <FiClipboard className="text-blue-500 text-3xl" />
+          <h2 className="text-3xl font-semibold text-gray-800 dark:text-gray-100">
+            Medical Reports Summary
+          </h2>
+        </div>
+        <p className="text-gray-500 dark:text-gray-400 mt-3 sm:mt-0">
+          Overview of patient diagnostics and status
+        </p>
       </div>
 
-      <table className="w-full text-left border-collapse">
-        <thead className="bg-green-100 dark:bg-gray-700">
-          <tr>
-            <th className="p-3 border dark:border-gray-600">Patient Name</th>
-            <th className="p-3 border dark:border-gray-600">Report Type</th>
-            <th className="p-3 border dark:border-gray-600">Status</th>
-            <th className="p-3 border dark:border-gray-600">Result</th>
-            <th className="p-3 border dark:border-gray-600 text-center">AI Chat</th>
-          </tr>
-        </thead>
-        <tbody>
-          {dummyReports.map((report) => (
-            <tr
-              key={report.id}
-              className="hover:bg-gray-50 dark:hover:bg-gray-700 transition"
-            >
-              <td className="p-3 border dark:border-gray-600">{report.name}</td>
-              <td className="p-3 border dark:border-gray-600">{report.type}</td>
-              <td
-                className={`p-3 border dark:border-gray-600 font-medium ${
+      {/* Grid Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {dummyReports.map((report) => (
+          <div
+            key={report.id}
+            className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 hover:shadow-lg transition-all border border-gray-100 dark:border-gray-700"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 dark:bg-gray-700 rounded-full">
+                  <FiUser className="text-blue-500 dark:text-blue-300 text-xl" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                  {report.name}
+                </h3>
+              </div>
+              <span
+                className={`text-xs px-3 py-1 rounded-full font-medium ${
                   report.status === "Analyzed"
-                    ? "text-green-600"
-                    : "text-yellow-500"
+                    ? "bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-300"
+                    : "bg-yellow-100 text-yellow-700 dark:bg-yellow-800 dark:text-yellow-300"
                 }`}
               >
                 {report.status}
-              </td>
-              <td className="p-3 border dark:border-gray-600">{report.result}</td>
-              <td className="p-3 border text-center dark:border-gray-600">
-                <button className="flex items-center justify-center mx-auto gap-2 bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md transition">
-                  <FiActivity /> Chat
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              </span>
+            </div>
+
+            <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+              <p className="flex items-center gap-2">
+                <FiFileText className="text-blue-400" />
+                <span>Type: {report.type}</span>
+              </p>
+              <p className="flex items-center gap-2">
+                <FiActivity className="text-purple-400" />
+                <span>Result: {report.result}</span>
+              </p>
+            </div>
+
+            <div className="mt-6 text-right">
+              <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition flex items-center gap-2 float-right">
+                <FiActivity className="text-white" />
+                Open Chat
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

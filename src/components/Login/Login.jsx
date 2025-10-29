@@ -13,6 +13,11 @@ const Login = () => {
   const navigate = useNavigate();
 
   const login = async () => {
+    if (!email || !password) {
+      toast.error("Please fill in all fields!");
+      return;
+    }
+
     try {
       const res = await axios.post(
         "https://hackathon-backend-flax.vercel.app/auth/login",
@@ -25,11 +30,8 @@ const Login = () => {
       toast.success("Welcome back!", { autoClose: 1000 });
 
       setTimeout(() => {
-        if (email === "admin@gmail.com") {
-          navigate("/Dashboard");
-        } else {
-          navigate("/Home");
-        }
+        if (email === "admin@gmail.com") navigate("/Dashboard");
+        else navigate("/Home");
       }, 1000);
     } catch (err) {
       toast.error("Login Failed: " + (err.response?.data || err.message), {
@@ -41,53 +43,60 @@ const Login = () => {
   const togglePassword = () => setShowPassword((prev) => !prev);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 via-white to-blue-100">
-      <div className="bg-white/70 backdrop-blur-lg border border-gray-200 rounded-2xl shadow-xl w-[380px] p-8">
-        {/* Header */}
-        <h1 className="text-3xl font-extrabold text-center text-green-700 mb-6">
-          HealthMate Login
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-200 via-blue-100 to-teal-200 relative overflow-hidden">
+      {/* Decorative Background Blobs */}
+      <div className="absolute w-72 h-72 bg-green-400/30 rounded-full blur-3xl top-10 left-10 animate-pulse"></div>
+      <div className="absolute w-72 h-72 bg-teal-400/30 rounded-full blur-3xl bottom-10 right-10 animate-pulse"></div>
+
+      {/* Glass Card */}
+      <div className="relative bg-white/30 backdrop-blur-2xl border border-white/40 shadow-2xl rounded-3xl w-[400px] p-8 text-gray-800 dark:text-white transition-all hover:shadow-green-200/50">
+        {/* Title */}
+        <h1 className="text-4xl font-extrabold text-center text-green-700 dark:text-green-400 drop-shadow-md mb-2">
+          HealthMate
         </h1>
-        <p className="text-center text-gray-600 mb-8 text-sm">
-          Sehat ka Smart Dost 💚<br />
-          Login to continue your health journey.
+        <p className="text-center text-gray-700 dark:text-gray-300 mb-8 text-sm">
+          Sehat ka Smart Dost 💚  
+          <br />Login to continue your health journey.
         </p>
 
-        {/* Email Field */}
-        <div className="mb-4">
-          <label className="block text-sm font-semibold mb-1">Email</label>
+        {/* Email Input */}
+        <div className="mb-5">
+          <label className="block text-sm font-semibold mb-2 text-green-700">
+            Email Address
+          </label>
           <input
             type="email"
-            placeholder="Enter your email"
-            className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+            placeholder="you@example.com"
+            className="w-full p-3 rounded-xl border border-green-300 focus:ring-2 focus:ring-green-400 outline-none bg-white/60 placeholder-gray-500"
             onChange={(e) => setEmail(e.target.value)}
-            required
           />
         </div>
 
-        {/* Password Field */}
-        <div className="mb-4 relative">
-          <label className="block text-sm font-semibold mb-1">Password</label>
+        {/* Password Input */}
+        <div className="mb-5 relative">
+          <label className="block text-sm font-semibold mb-2 text-green-700">
+            Password
+          </label>
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Enter your password"
-            className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 pr-10"
+            className="w-full p-3 rounded-xl border border-green-300 focus:ring-2 focus:ring-green-400 outline-none bg-white/60 pr-10 placeholder-gray-500"
             onChange={(e) => setPassword(e.target.value)}
-            required
           />
           <img
             src={showPassword ? hidepassword : showpassword}
             alt="toggle"
             onClick={togglePassword}
-            className="w-5 absolute right-3 top-9 cursor-pointer"
+            className="w-5 absolute right-3 top-10 cursor-pointer opacity-70 hover:opacity-100 transition"
           />
         </div>
 
-        {/* Forgot + Signup Links */}
+        {/* Links */}
         <div className="flex justify-between text-sm mb-6 text-green-700 font-medium">
-          <Link to="/Forget" className="underline">
+          <Link to="/Forget" className="underline hover:text-green-900">
             Forgot password?
           </Link>
-          <Link to="/SignUp" className="underline">
+          <Link to="/SignUp" className="underline hover:text-green-900">
             Create an account
           </Link>
         </div>
@@ -95,7 +104,7 @@ const Login = () => {
         {/* Login Button */}
         <button
           onClick={login}
-          className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md font-semibold transition-all active:scale-95"
+          className="w-full bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white py-3 rounded-xl font-semibold shadow-md transition-all duration-300 active:scale-95"
         >
           Sign In
         </button>
@@ -109,17 +118,17 @@ const Login = () => {
           <hr className="flex-grow border-gray-300" />
         </div>
 
-        {/* Google Login Only */}
+        {/* Google Button */}
         <div className="flex justify-center">
-          <div className="border border-gray-300 py-2 px-6 rounded-lg cursor-pointer hover:bg-gray-50 transition-all active:scale-95 flex items-center gap-2">
+          <div className="border border-gray-300 bg-white/70 py-2 px-6 rounded-xl cursor-pointer hover:bg-white/90 active:scale-95 flex items-center gap-2 shadow-sm transition-all">
             <img src={google} alt="Google" className="w-6" />
             <span className="font-medium text-gray-700">Google</span>
           </div>
         </div>
 
         {/* Footer */}
-        <p className="text-xs text-gray-500 mt-8 text-center italic">
-          "AI is for understanding only, not for medical advice."
+        <p className="text-xs text-gray-600 mt-8 text-center italic leading-relaxed">
+          “AI is for understanding only, not for medical advice.”  
           <br />
           <span className="text-green-700">
             “Yeh AI sirf samajhne ke liye hai, ilaaj ke liye nahi.”

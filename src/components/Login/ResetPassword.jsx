@@ -33,80 +33,84 @@ const ResetPassword = () => {
       );
 
       toast.success(res.data.message || "Password reset successfully!");
-      setTimeout(() => navigate("/"), 1000);
+      setTimeout(() => navigate("/"), 1200);
     } catch (err) {
       toast.error(err.response?.data?.message || "Something went wrong!");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 via-white to-blue-100">
-      <div className="bg-white/70 backdrop-blur-lg border border-gray-200 rounded-2xl shadow-xl w-[380px] p-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-200 via-blue-100 to-teal-200 relative overflow-hidden">
+      {/* Decorative Gradient Blobs */}
+      <div className="absolute w-80 h-80 bg-green-400/30 rounded-full blur-3xl top-12 left-10 animate-pulse"></div>
+      <div className="absolute w-80 h-80 bg-teal-400/30 rounded-full blur-3xl bottom-12 right-10 animate-pulse"></div>
+
+      {/* Glass Card */}
+      <div className="relative bg-white/30 backdrop-blur-2xl border border-white/40 shadow-2xl rounded-3xl w-[400px] p-8 text-gray-800 transition-all hover:shadow-green-200/50">
         {/* Title */}
-        <h1 className="text-3xl font-extrabold text-center text-green-700 mb-2">
+        <h1 className="text-4xl font-extrabold text-center text-green-700 drop-shadow-md mb-3">
           Reset Password
         </h1>
-        <p className="text-center text-gray-600 mb-6 text-sm">
-          Apna naya password set karo 💪 <br /> aur HealthMate ke sath healthy
-          raho.
+        <p className="text-center text-gray-700 mb-8 text-sm">
+          🔒 Naya password set karo aur apni sehat data ko surakshit rakho 💚
         </p>
 
-        {/* Password Field */}
+        {/* New Password Field */}
         <div className="mb-5 relative">
-          <label className="block text-sm font-semibold mb-1">
+          <label className="block text-sm font-semibold mb-2 text-green-700">
             New Password
           </label>
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Enter new password"
-            className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 pr-10"
+            className="w-full p-3 rounded-xl border border-green-300 focus:ring-2 focus:ring-green-400 outline-none bg-white/60 pr-10 placeholder-gray-500"
             onChange={(e) => setPassword(e.target.value)}
           />
           <img
             src={showPassword ? hidepassword : showpassword}
             alt="toggle"
             onClick={togglePassword}
-            className="w-5 absolute right-3 top-9 cursor-pointer"
+            className="w-5 absolute right-3 top-11 cursor-pointer opacity-70 hover:opacity-100 transition"
           />
         </div>
 
         {/* Confirm Password Field */}
         <div className="mb-6 relative">
-          <label className="block text-sm font-semibold mb-1">
+          <label className="block text-sm font-semibold mb-2 text-green-700">
             Confirm Password
           </label>
           <input
             type={showPassword ? "text" : "password"}
-            placeholder="Confirm your password"
-            className="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 pr-10"
+            placeholder="Re-enter your password"
+            className="w-full p-3 rounded-xl border border-green-300 focus:ring-2 focus:ring-green-400 outline-none bg-white/60 pr-10 placeholder-gray-500"
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
           <img
             src={showPassword ? hidepassword : showpassword}
             alt="toggle"
             onClick={togglePassword}
-            className="w-5 absolute right-3 top-9 cursor-pointer"
+            className="w-5 absolute right-3 top-11 cursor-pointer opacity-70 hover:opacity-100 transition"
           />
         </div>
 
         {/* Reset Button */}
         <button
           onClick={handleReset}
-          className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md font-semibold transition-all active:scale-95"
+          className="w-full bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white py-3 rounded-xl font-semibold shadow-md transition-all duration-300 active:scale-95"
         >
           Reset Password
         </button>
 
         {/* Back to Login */}
-        <div className="text-sm text-center mt-5 text-green-700 font-medium">
+        <div className="text-sm text-center mt-6 text-green-700 font-medium">
           Back to{" "}
-          <Link to="/" className="underline">
+          <Link to="/" className="underline hover:text-green-900">
             Sign In
           </Link>
         </div>
 
         {/* Footer */}
-        <p className="text-xs text-gray-500 mt-8 text-center italic">
+        <p className="text-xs text-gray-600 mt-8 text-center italic leading-relaxed">
           “Apna password strong rakho — sehat aur data dono surakshit rakho 💚”
         </p>
       </div>

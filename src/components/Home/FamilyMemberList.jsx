@@ -6,13 +6,11 @@ import { useNavigate } from "react-router-dom";
 const FamilyMemberList = () => {
   const [familyMembers, setFamilyMembers] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [userId, setUserId] = useState(localStorage.getItem("userId"));
+  const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
 
-  // ✅ Fetch family members when userId is available
   useEffect(() => {
     if (!userId) return;
-
     const fetchMembers = async () => {
       try {
         const res = await fetch(
@@ -27,7 +25,6 @@ const FamilyMemberList = () => {
     fetchMembers();
   }, [userId]);
 
-  // ✅ Add new member
   const addMember = async (memberData) => {
     try {
       const res = await fetch(
@@ -50,16 +47,16 @@ const FamilyMemberList = () => {
     }
   };
 
-  // ✅ UI
   return (
-    <div className="max-w-5xl mx-auto p-6 mt-20 relative">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-green-700 dark:text-green-400">
+    <div className="max-w-7xl mx-auto px-6 mt-20 space-y-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+        <h2 className="text-3xl font-bold text-green-700 dark:text-green-400">
           👨‍👩‍👧‍👦 Family Members
         </h2>
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition"
+          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
         >
           <FaPlus /> Add Member
         </button>
@@ -67,15 +64,18 @@ const FamilyMemberList = () => {
 
       {/* Add Member Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg w-[90%] max-w-md relative">
+        <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+          <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-[90%] max-w-md p-6 animate-slide-in relative">
             <button
-              className="absolute top-2 right-3 text-gray-500 text-xl"
               onClick={() => setShowForm(false)}
+              className="absolute top-3 right-4 text-gray-500 hover:text-red-500 text-xl transition"
             >
               ✕
             </button>
-            <AddFamilyMember onAdd={addMember} onCancel={() => setShowForm(false)} />
+            <AddFamilyMember
+              onAdd={addMember}
+              onCancel={() => setShowForm(false)}
+            />
           </div>
         </div>
       )}
@@ -86,23 +86,24 @@ const FamilyMemberList = () => {
           <div
             key={member._id}
             onClick={() => navigate(`/member/${member._id}`)}
-            className="bg-white dark:bg-gray-800 shadow-md rounded-2xl p-5 border border-green-100 dark:border-gray-700 hover:scale-105 transition cursor-pointer"
+            className="bg-gradient-to-br from-green-50 to-green-100 dark:from-gray-800 dark:to-gray-900 border border-green-100 dark:border-gray-700 rounded-2xl shadow-md hover:shadow-xl hover:scale-105 transition-all duration-200 cursor-pointer p-5 flex flex-col items-center text-center"
           >
-            <div className="flex items-center gap-4">
-              <img
-                src={member.imageUrl}
-                alt={member.name}
-                className="w-14 h-14 rounded-full object-cover border-2 border-green-400"
-              />
-              <div>
-                <h3 className="text-lg font-semibold">{member.name}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {member.relation}
-                </p>
-              </div>
-            </div>
+            <img
+              src={member.imageUrl}
+              alt={member.name}
+              className="w-20 h-20 rounded-full object-cover border-4 border-green-400 shadow-md mb-3"
+            />
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white">{member.name}</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{member.relation}</p>
           </div>
         ))}
+
+        {/* Placeholder if no members */}
+        {familyMembers.length === 0 && (
+          <p className="col-span-full text-center text-gray-500 dark:text-gray-400 mt-10">
+            No family members added yet. Click "Add Member" to start.
+          </p>
+        )}
       </div>
     </div>
   );
