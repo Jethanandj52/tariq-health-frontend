@@ -67,14 +67,14 @@ const Login = () => {
           <input
             type="email"
             placeholder="you@example.com"
-            className="w-full p-3 rounded-xl border border-green-300 focus:ring-2 focus:ring-green-400 outline-none bg-white/60 placeholder-gray-500"
+            className="w-full p-3 rounded-xl border dark:text-gray-800 border-green-300 focus:ring-2 focus:ring-green-400 outline-none bg-white/60 placeholder-gray-500"
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
         {/* Password Input */}
         <div className="mb-5 relative">
-          <label className="block text-sm font-semibold mb-2 text-green-700">
+          <label className="block text-sm dark:text-gray-800 font-semibold mb-2 text-green-700">
             Password
           </label>
           <input
