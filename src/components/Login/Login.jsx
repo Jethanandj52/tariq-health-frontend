@@ -19,11 +19,11 @@ const Login = () => {
     }
 
     try {
-      const res = await axios.post(
-        "https://tariq-health-backend.vercel.app/auth/login",
-        { email, password },
-        { withCredentials: true }
-      );
+     const res = await axios.post(
+  "https://tariq-health-backend.vercel.app/auth/login",
+  { email, password },
+  { withCredentials: true }
+);
 
       localStorage.setItem("user", JSON.stringify({ email }));
 
